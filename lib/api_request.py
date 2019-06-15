@@ -5,9 +5,10 @@ import urllib
 import os
 import urllib.parse
 from jinja2 import Template, TemplateError
-from json_data import data_from_json_file
 
-from endpoint import Endpoint
+from lib.json_data import data_from_json_file
+from lib.endpoint import Endpoint
+from lib.helpers import make_file_dir_if_not_exists
 
 cli_api_dir = os.path.join(os.environ["HOME"], ".cli-api")
 templates_dir = os.path.join(cli_api_dir, "templates")
@@ -31,9 +32,10 @@ async def _get_session():
 def _load_template_file_and_create_if_not_found(*paths):
     template_file = os.path.join(*paths)
     mode = "r+" if os.path.isfile(template_file) else "w+"
+    make_file_dir_if_not_exists(template_file)
     with open(template_file, mode) as file:
         if mode == "w+":
-            file.write("{{response}}")
+            file.write("{{ response|pprint }}")
         return Template(file.read())
 
 
@@ -47,11 +49,10 @@ def _get_path(data, alias, path):
     return data[alias]["paths"][path]
 
 
-def _make_url(alias_or_url, path, values):
+def _get_endpoint_from_alias_file(endpoint, path, method):
     alias_file = os.path.join(cli_api_dir, "aliases.json")
     with data_from_json_file(alias_file) as data:
-        endpoint = _create_true_endpoint(data, alias_or_url, path)
-        return endpoint.get_url(values)
+        return _build_endpoint(data, endpoint, path, method)
 
 
 def _create_format_string_from_path(path):
@@ -66,7 +67,7 @@ def _create_format_string_from_path(path):
     return "/".join(segments)
 
 
-def _create_true_endpoint(data, endpoint, path=None):
+def _build_endpoint(data, endpoint, path, method):
     if endpoint not in data:
         parts = urllib.parse.urlparse(endpoint)
         endpoint = input(f"Enter alias for {parts.hostname}: ")
@@ -74,30 +75,38 @@ def _create_true_endpoint(data, endpoint, path=None):
         data[endpoint]["base_url"] = f"{parts.scheme}://{parts.hostname}"
     if "paths" not in data[endpoint]:
         data[endpoint]["paths"] = {}
-    if not path or path not in data[endpoint]["paths"]:
+    if method not in data[endpoint]["paths"]:
+        data[endpoint]["paths"][method] = {}
+    if not path or path not in data[endpoint]["paths"][method]:
         path = path if path else parts.path
         path_string = _create_format_string_from_path(path)
         path = input(f"Enter path name for {endpoint} -> '{path}': ")
-        data[endpoint]["paths"][path] = path_string
+        data[endpoint]["paths"][method][path] = path_string
     return Endpoint(
-        base_url=data[endpoint]["base_url"], path=data[endpoint]["paths"][path]
+        method=method,
+        name=endpoint,
+        base_url=data[endpoint]["base_url"],
+        path_string=data[endpoint]["paths"][method][path],
+        path_name=path,
     )
 
 
-async def api_request(alias, path, method="get", values=None, variant=None):
+async def call(endpoint, path, method="get", values=None, variant=None):
     async with _get_session() as session:
-        url = _make_url(alias, path, values)
-        async with session.get(url) as response:
+        endpoint = _get_endpoint_from_alias_file(endpoint, path, method)
+        async with session.get(endpoint.get_url(values)) as response:
             try:
                 if response.status != 200:
                     template = _load_template_file_and_create_if_not_found(
-                        templates_dir, alias, "error.template"
+                        templates_dir, endpoint.name, "error.template"
                     )
                 else:
                     template = _load_template_file_and_create_if_not_found(
-                        templates_dir, alias, method, f"{path}.template"
+                        templates_dir,
+                        endpoint.name,
+                        endpoint.method,
+                        f"{endpoint.path_name}.template",
                     )
                 return template.render(response=await response.json())
             except (OSError, TemplateError, AttributeError):
                 return await response.text()
-

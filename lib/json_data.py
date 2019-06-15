@@ -2,16 +2,12 @@ import contextlib
 import os
 import json
 
-
-def _make_file_dir_if_not_exists(path):
-    dir = os.path.dirname(path)
-    if not os.path.isdir(dir):
-        os.makedirs(dir)
+from lib.helpers import make_file_dir_if_not_exists
 
 
 @contextlib.contextmanager
 def data_from_json_file(path):
-    _make_file_dir_if_not_exists(path)
+    make_file_dir_if_not_exists(path)
     mode = "r+" if os.path.isfile(path) else "w+"
     with open(path, mode) as file:
         try:
