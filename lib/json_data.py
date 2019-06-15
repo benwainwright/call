@@ -1,6 +1,7 @@
 import contextlib
 import os
 import json
+import copy
 
 from lib.helpers import make_file_dir_if_not_exists
 
@@ -17,7 +18,7 @@ def data_from_json_file(path):
             except ValueError:
                 json_data = {}
                 was_error = True
-            old_data = dict(json_data)
+            old_data = copy.deepcopy(json_data)
             yield json_data
         finally:
             if json_data != old_data or was_error:
