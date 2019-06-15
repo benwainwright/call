@@ -45,23 +45,29 @@ def _create_format_string_from_url(path, query):
     print(f"\nPath '{path}'")
     segments = path.strip("/").split("/")
     placeholders = [f"{i}: {segment}" for i, segment in enumerate(segments)]
-    query_parts = query.split("&")
     print("\n".join(placeholders))
-    print(f"\nQuery string '{query}'")
-    query_placeholders = [
-        f"{i + len(segments)}: {segment}" for i, segment in enumerate(query_parts)
-    ]
-    print("\n".join(query_placeholders))
+    if len(query) > 0:
+        query_parts = query.split("&")
+        print(f"\nQuery string '{query}'")
+        query_placeholders = [
+            f"{i + len(segments)}: {segment}" for i, segment in enumerate(query_parts)
+        ]
+        print("\n".join(query_placeholders))
+    else:
+        query_parts = []
+
     placeholders = input("\nEnter comma separated list of numbers: ")
-    indexes = [int(num.strip()) for num in placeholders]
+    indexes = [int(num.strip()) for num in placeholders.strip().split(",")]
 
     for index in (i for i in indexes if i < len(segments)):
         segments[index] = "{}"
 
-    for index in (i - len(segments) for i in indexes if i >= len(segments)):
-        pair = query_parts[index].split("=", 1)
-        pair[1] = "{}"
-        query_parts[index] = "=".join(pair)
+    print(len(query))
+    if len(query_parts) > 0:
+        for index in (i - len(segments) for i in indexes if i >= len(segments)):
+            pair = query_parts[index].split("=", 1)
+            pair[1] = "{}"
+            query_parts[index] = "=".join(pair)
 
     return "/".join(segments), "&".join(query_parts)
 
@@ -73,12 +79,14 @@ def _make_path(data, endpoint, path, query, method):
         data[endpoint]["paths"][method] = {}
     if not path or path not in data[endpoint]["paths"][method]:
         path_string, query_string = _create_format_string_from_url(path, query)
-        full_string = f"{path_string}?{query_string}"
+        full_string = (
+            f"{path_string}?{query_string}" if len(query_string) > 0 else path_string
+        )
         path = input(f"Enter path name for {endpoint} -> '{full_string}': ")
         data[endpoint]["paths"][method][path] = {}
         data[endpoint]["paths"][method][path][
             "string"
-        ] = f"{path_string}?{query_string}"
+        ] = full_string
         option_count = len(path_string.split("{}")) - 1
         data[endpoint]["paths"][method][path]["path_options"] = []
         if (option_count) > 0:
@@ -90,7 +98,7 @@ def _make_path(data, endpoint, path, query, method):
 
         for pair in query_string.split("&"):
             pair = pair.split("=", 1)
-            if pair[1] == "{}":
+            if len(pair) > 1 and pair[1] == "{}":
                 data[endpoint]["paths"][method][path]["path_options"].append(pair[0])
     return path
 
