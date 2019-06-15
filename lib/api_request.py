@@ -10,7 +10,7 @@ from lib.json_data import data_from_json_file
 from lib.endpoint import Endpoint
 from lib.helpers import make_file_dir_if_not_exists
 
-cli_api_dir = os.path.join(os.environ["HOME"], ".cli-api")
+cli_api_dir = os.path.join(os.environ["HOME"], ".call")
 templates_dir = os.path.join(cli_api_dir, "templates")
 
 
