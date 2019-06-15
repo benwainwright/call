@@ -9,6 +9,8 @@ templates. If you run the program with an api URL, it will:
 
 - Create and save an alias for the domain
 - Create and save an alias for the path, with named variable elements
+- Create and save a default Jinja template for displaying the response. This can be
+    edited however you wish
 
 Next time you run the program, you will be able to make the same request using
 the alias rather than the full url, passing in the values of variable sections
