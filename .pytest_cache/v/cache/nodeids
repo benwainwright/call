@@ -1,0 +1,3 @@
+[
+  "tests/test_add_endpoint.py::test_adding_endpoint_with_variables_results_in_correct_alias"
+]

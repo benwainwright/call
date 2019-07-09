@@ -6,10 +6,10 @@ import os
 import urllib.parse
 from jinja2 import Environment, TemplateError
 
-from lib.json_data import data_from_json_file
-from lib.endpoint import Endpoint
-from lib.template_loader import TemplateLoader
-from lib.pretty_json import pretty_json
+from call.json_data import data_from_json_file
+from call.endpoint import Endpoint
+from call.template_loader import TemplateLoader
+from call.pretty_json import pretty_json
 
 
 cli_api_dir = os.path.join(os.environ["HOME"], ".call")
@@ -19,25 +19,23 @@ jinja_env = Environment(loader=TemplateLoader(cli_api_dir))
 jinja_env.filters["pretty_json"] = pretty_json
 
 
-@contextlib.asynccontextmanager
-async def _get_session():
-    try:
-        sslcontext = ssl.create_default_context(purpose=ssl.Purpose.CLIENT_AUTH)
-        sslcontext.load_cert_chain(
-            certfile="/etc/pki/tls/certs/client.crt",
-            keyfile="/etc/pki/tls/private/client.key",
-        )
-        connector = aiohttp.TCPConnector(ssl=sslcontext)
-        session = aiohttp.ClientSession(trust_env=True, connector=connector)
-        yield session
-    finally:
-        await session.close()
 
 
 def _get_endpoint_from_alias_file(endpoint, path, method):
     alias_file = os.path.join(cli_api_dir, "aliases.json")
     with data_from_json_file(alias_file) as data:
-        return _build_endpoint(data, endpoint, path, method)
+        parts = urllib.parse.urlparse(endpoint)
+        path = _make_path(
+            data, endpoint, path if path else parts.path, parts.query, method
+        )
+        return Endpoint(
+            method=method,
+            name=endpoint,
+            base_url=data[endpoint]["base_url"],
+            path_string=data[endpoint]["paths"][method][path]["string"],
+            path_name=path,
+            option_names=data[endpoint]["paths"][method][path]["path_options"],
+        )
 
 
 def _create_format_string_from_url(path, query):
@@ -84,9 +82,7 @@ def _make_path(data, endpoint, path, query, method):
         )
         path = input(f"Enter path name for {endpoint} -> '{full_string}': ")
         data[endpoint]["paths"][method][path] = {}
-        data[endpoint]["paths"][method][path][
-            "string"
-        ] = full_string
+        data[endpoint]["paths"][method][path]["string"] = full_string
         option_count = len(path_string.split("{}")) - 1
         data[endpoint]["paths"][method][path]["path_options"] = []
         if (option_count) > 0:
@@ -103,18 +99,8 @@ def _make_path(data, endpoint, path, query, method):
     return path
 
 
-def _build_endpoint(data, endpoint, path, method):
+def _load_endpoint(data, endpoint, path, method):
     parts = urllib.parse.urlparse(endpoint)
-    if endpoint not in data:
-        base_url = f"{parts.scheme}://{parts.hostname}"
-        found = [key for key in data.keys() if data[key]["base_url"] == base_url]
-        if len(found) > 0:
-            endpoint = found[0]
-            print(f"'{base_url}' is already aliased to '{endpoint}'")
-        else:
-            endpoint = input(f"Enter alias for {base_url}: ")
-            data[endpoint] = {}
-            data[endpoint]["base_url"] = base_url
     path = _make_path(data, endpoint, path if path else parts.path, parts.query, method)
     return Endpoint(
         method=method,
@@ -124,17 +110,6 @@ def _build_endpoint(data, endpoint, path, method):
         path_name=path,
         option_names=data[endpoint]["paths"][method][path]["path_options"],
     )
-
-
-def get_response_template(response, endpoint):
-    if response.status != 200:
-        return jinja_env.get_template(os.path.join(endpoint.name, "error.template"))
-    else:
-        return jinja_env.get_template(
-            os.path.join(
-                endpoint.name, endpoint.method, f"{endpoint.path_name}.template"
-            )
-        )
 
 
 async def call(endpoint, path, method="get", other_opts=None):
