@@ -27,11 +27,12 @@ def _add_endpoint_alias(url, alias=None, route_name=None, method="get"):
             endpoint = call.Endpoint.from_dict(data[alias])
         else:
             endpoint = call.endpoint.Endpoint(name=alias, base_url=base_url, paths=[])
-            endpoint.paths.append(
-                _make_new_path_alias(
-                    alias, base_url, parts.path, parts.query, method, route_name
-                )
+
+        endpoint.paths.append(
+            _make_new_path_alias(
+                alias, base_url, parts.path, parts.query, method, route_name
             )
+        )
 
         data[alias] = endpoint.to_dict()
 
@@ -53,11 +54,7 @@ def _create_format_string_from_url(path, query) -> str:
         query_parts = []
 
     placeholders = input("\nEnter comma separated list of numbers: ")
-    indexes = (
-        [int(num.strip()) for num in placeholders.strip().split(",")]
-        if len(placeholders) > 0
-        else []
-    )
+    indexes = [int(num.strip()) for num in placeholders.strip().split(",")] if len(placeholders) > 0 else []
     for index in (i for i in indexes if i < len(segments)):
         segments[index] = "{}"
 
