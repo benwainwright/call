@@ -9,7 +9,7 @@ class EndpointManager:
         self.data = data
 
     def __iter__(self):
-        for key in data:
+        for key in self.data:
             with self.get_endpoint(key) as endpoint:
                 yield endpoint
 
