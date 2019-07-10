@@ -2,9 +2,11 @@ import unittest
 import builtins
 from call.add_endpoint import _add_endpoint_alias
 
+
 def test_adding_endpoint_with_variables_results_in_correct_alias():
 
     i = 0
+
     def mock_input(prompt):
         if "alias" in prompt.lower():
             return "github"
@@ -43,7 +45,7 @@ def test_adding_endpoint_with_variables_results_in_correct_alias():
     }
 }"""
 
-    m =  unittest.mock.mock_open()
+    m = unittest.mock.mock_open()
     with unittest.mock.patch("builtins.input", mock_input):
         with unittest.mock.patch("builtins.open", m, create=True):
             _add_endpoint_alias(input_data)
@@ -53,7 +55,6 @@ def test_adding_endpoint_with_variables_results_in_correct_alias():
 
 
 def test_adding_endpoint_without_any_options_results_in_simple_alias():
-
     def mock_input(prompt):
         if "alias" in prompt.lower():
             return "jenkins"
@@ -66,7 +67,6 @@ def test_adding_endpoint_without_any_options_results_in_simple_alias():
 
         if "comma separated list of numbers" in prompt.lower():
             return ""
-
 
     input_data = "https://jenkins.webcore.tools.bbc.co.uk/api/json"
     output_data = """\
@@ -85,11 +85,10 @@ def test_adding_endpoint_without_any_options_results_in_simple_alias():
     }
 }"""
 
-    m =  unittest.mock.mock_open()
+    m = unittest.mock.mock_open()
     with unittest.mock.patch("builtins.input", mock_input):
         with unittest.mock.patch("builtins.open", m, create=True):
             _add_endpoint_alias(input_data)
 
     handle = m()
     handle.write.assert_called_once_with(output_data)
-

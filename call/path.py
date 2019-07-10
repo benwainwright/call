@@ -8,4 +8,3 @@ class Path:
     name: str
     route: str
     options: [str]
-

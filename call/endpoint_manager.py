@@ -3,8 +3,8 @@ import contextlib
 from call.json_data_manager import JsonDataManager
 from call.endpoint import Endpoint
 
-class EndpointManager:
 
+class EndpointManager:
     def __init__(self, data):
         self.data = data
 

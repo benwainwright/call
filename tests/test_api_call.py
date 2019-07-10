@@ -12,14 +12,7 @@ async def test_correct_api_call_is_made_when_passing_in_configured_alias(arespon
         "jenkins": {
             "name": "jenkins",
             "base_url": "https://jenkins.webcore.tools.bbc.co.uk",
-            "paths": {
-                "get": {
-                    "list": {
-                        "route": "api/json",
-                        "options": []
-                    }
-                }
-            }
+            "paths": {"get": {"list": {"route": "api/json", "options": []}}},
         }
     }
 

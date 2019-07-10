@@ -115,4 +115,3 @@ def _make_new_path_alias(
         route=full_string,
         options=_get_option_names(path_string, query_string),
     )
-
