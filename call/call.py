@@ -21,7 +21,7 @@ class Call:
                     )
                 else:
                     template = self.jinja_env.get_template(
-                        os.path.join(alias, "{path}.template")
+                        os.path.join(alias, f"{path}.template")
                     )
                 return template.render(response=await response.json())
             except (OSError, TemplateError, AttributeError):
