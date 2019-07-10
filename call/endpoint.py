@@ -28,7 +28,7 @@ class Endpoint:
             query_pairs = [
                 pair.split("=", 1) for pair in parts.query.split("&") if len(pair) > 0
             ]
-            names = self.option_names + [
+            names = path.options + [
                 pair[0] for pair in query_pairs if len(pair) > 1 and pair[1] == "{}"
             ]
             values = [
