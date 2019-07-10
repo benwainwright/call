@@ -17,7 +17,7 @@ from call import (
 from call.endpoint_manager import EndpointManager
 
 
-async def go(endpoint, path, method, other_opts):
+async def call_api(alias, path, args):
     jinja_env = Environment(loader=TemplateLoader(call.config.CLI_API_DIR))
     jinja_env.filters["pretty_json"] = pretty_json
     data_manager = JsonDataManager(call.config.ALIAS_FILE)
@@ -25,23 +25,21 @@ async def go(endpoint, path, method, other_opts):
         endpoints = EndpointManager(data)
         requester = ApiRequester(endpoints)
         caller = Call(jinja_env, requester)
-
-
-# def main(endpoint, path, api_options, method):
-#     loop = asyncio.new_event_loop()
-#     asyncio.set_event_loop(loop)
-#     other_opts = parse_other_args(api_options)
-#     loop.run_until_complete(go(endpoint, path, method, other_opts))
+        print(await caller.call_and_render(alias, path, args.values()))
 
 
 def go(arguments):
-    pass
+    alias = arguments.command.parent.name
+    path = arguments.command.name
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(call_api(alias, path, arguments.args))
 
 
 data_manager = JsonDataManager(call.config.ALIAS_FILE)
 with data_manager.data() as data:
     endpoints = EndpointManager(data)
-    call = Command(
+    call_command = Command(
         name="call",
         subcommands=[
             Command(
@@ -67,7 +65,7 @@ with data_manager.data() as data:
     )
 
 try:
-    call.execute(sys.argv)
+    call_command.execute(sys.argv)
 except BadUsageError as ex:
     print(f"Error! {ex.message}\n")
     print(f"Usage: {ex.usage}")

@@ -3,6 +3,8 @@ import aiohttp
 import contextlib
 import pyargs
 
+from jinja2 import TemplateError
+
 from call.endpoint_manager import EndpointManager
 from call.endpoint import Endpoint
 from call.json_data_manager import JsonDataManager
