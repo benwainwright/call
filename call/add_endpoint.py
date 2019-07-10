@@ -6,6 +6,7 @@ from builtins import ValueError
 
 alias_file = JsonDataManager(call.config.ALIAS_FILE)
 
+
 def add_endpoint_command(arguments):
     if "url" not in arguments.args:
         raise ValueError("Url not supplied")
@@ -54,7 +55,11 @@ def _create_format_string_from_url(path, query) -> str:
         query_parts = []
 
     placeholders = input("\nEnter comma separated list of numbers: ")
-    indexes = [int(num.strip()) for num in placeholders.strip().split(",")] if len(placeholders) > 0 else []
+    indexes = (
+        [int(num.strip()) for num in placeholders.strip().split(",")]
+        if len(placeholders) > 0
+        else []
+    )
     for index in (i for i in indexes if i < len(segments)):
         segments[index] = "{}"
 
@@ -107,9 +112,10 @@ def _make_new_path_alias(
     name = (
         route_name
         if route_name is not None
-        else input(f"Enter path name for {alias} -> {method.upper()} -> {full_string}: ")
+        else input(
+            f"Enter path name for {alias} -> {method.upper()} -> {full_string}: "
+        )
     )
-
 
     return call.path.Path(
         method=method,

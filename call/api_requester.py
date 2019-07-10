@@ -8,7 +8,6 @@ from call.json_data_manager import JsonDataManager
 
 
 class ApiRequester:
-
     def __init__(self, data_manager: JsonDataManager):
         self.data_manager = data_manager
 
