@@ -18,7 +18,7 @@ class TemplateLoader(BaseLoader):
                 file.write(default_template)
             mtime = os.path.getmtime(template_file)
             return (
-                file.read(),
+                default_template if mode == "w+" else file.read(),
                 template_file,
                 lambda: mtime == os.path.getmtime(template_file),
             )
