@@ -27,12 +27,10 @@ def _add_endpoint_alias(url, alias=None, route_name=None, method="get"):
         if alias in data:
             endpoint = Endpoint.from_dict(data[alias])
         else:
-            endpoint = Endpoint(name=alias, base_url=base_url, paths=[])
+            endpoint = Endpoint(name=alias, base_url=base_url, paths={})
 
-        endpoint.paths.append(
-            _make_new_path_alias(
-                alias, base_url, parts.path, parts.query, method, route_name
-            )
+        endpoint.paths[alias] = _make_new_path_alias(
+            alias, base_url, parts.path, parts.query, method, route_name
         )
 
         data[alias] = endpoint.to_dict()

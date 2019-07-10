@@ -3,22 +3,22 @@ import aiohttp
 import contextlib
 import pyargs
 
+from call.endpoint_manager import EndpointManager
 from call.endpoint import Endpoint
 from call.json_data_manager import JsonDataManager
 
 
 class ApiRequester:
-    def __init__(self, data_manager: JsonDataManager):
-        self.data_manager = data_manager
+    def __init__(self, endpoint_manager: EndpointManager):
+        self.endpoint_manager = endpoint_manager
 
     @contextlib.asynccontextmanager
     async def do_call(
         self, alias: str, path: str, parsed_arguments: [pyargs.Argument] = None
     ) -> aiohttp.ClientRequest:
         async with ApiRequester._get_session() as session:
-            with self.data_manager.data() as data:
-                if alias in data:
-                    endpoint = Endpoint.from_dict(data[alias])
+            if alias in self.endpoint_manager:
+                with self.endpoint_manager.get_endpoint(alias) as endpoint:
                     request = endpoint.build_request(path, parsed_arguments)
                     async with request.send(session) as response:
                         yield response

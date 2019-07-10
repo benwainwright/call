@@ -3,6 +3,7 @@ import pytest
 import os
 
 from call.api_requester import ApiRequester
+from call.endpoint_manager import EndpointManager
 
 
 @pytest.mark.asyncio
@@ -21,8 +22,8 @@ async def test_correct_api_call_is_made_when_passing_in_configured_alias(arespon
             }
         }
     }
-    mock_data_manager = unittest.mock.MagicMock()
-    mock_data_manager.data.return_value.__enter__.return_value = mock_data
+
+    manager = EndpointManager(mock_data)
 
     aresponses.add(
         "jenkins.webcore.tools.bbc.co.uk",
@@ -33,7 +34,7 @@ async def test_correct_api_call_is_made_when_passing_in_configured_alias(arespon
             headers={"Content-Type": "application/json"},
         ),
     )
-    requester = ApiRequester(mock_data_manager)
+    requester = ApiRequester(manager)
 
     async with requester.do_call("jenkins", "list") as response:
         assert await response.json() == {"response": "found"}

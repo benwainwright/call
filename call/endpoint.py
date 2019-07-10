@@ -61,9 +61,9 @@ class Endpoint:
             "paths": {
                 method: {
                     path.name: {"route": path.route, "options": path.options}
-                    for path in self.paths
+                    for path in self.paths.values()
                     if path.method == method
                 }
-                for method in {path.method for path in self.paths}
+                for method in {path.method for path in self.paths.values()}
             },
         }
