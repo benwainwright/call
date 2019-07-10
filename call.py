@@ -25,15 +25,15 @@ async def call_api(alias, path, args):
         endpoints = EndpointManager(data)
         requester = ApiRequester(endpoints)
         caller = Call(jinja_env, requester)
-        print(await caller.call_and_render(alias, path, args.values()))
+        print(await caller.call_and_render(alias, path, args))
 
 
-def go(arguments):
-    alias = arguments.command.parent.name
-    path = arguments.command.name
+def go(command, args, unknown_named, unknown_positional):
+    alias = command.parent.name
+    path = command.name
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    loop.run_until_complete(call_api(alias, path, arguments.args))
+    loop.run_until_complete(call_api(alias, path, args))
 
 
 data_manager = JsonDataManager(call.config.ALIAS_FILE)

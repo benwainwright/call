@@ -20,7 +20,7 @@ class Call:
                         os.path.join(alias, "error.template")
                     )
                 else:
-                    template = jinja_env.get_template(
+                    template = self.jinja_env.get_template(
                         os.path.join(alias, "{path}.template")
                     )
                 return template.render(response=await response.json())

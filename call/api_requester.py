@@ -16,7 +16,7 @@ class ApiRequester:
 
     @contextlib.asynccontextmanager
     async def do_call(
-        self, alias: str, path: str, parsed_arguments: [pyargs.Argument] = None
+        self, alias: str, path: str, parsed_arguments: pyargs.ParsedArguments = None
     ) -> aiohttp.ClientRequest:
         async with ApiRequester._get_session() as session:
             if alias in self.endpoint_manager:

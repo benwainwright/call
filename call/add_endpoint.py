@@ -7,14 +7,8 @@ from builtins import ValueError
 alias_file = JsonDataManager(call.config.ALIAS_FILE)
 
 
-def add_endpoint_command(arguments):
-    if "url" not in arguments.args:
-        raise ValueError("Url not supplied")
-
-    _add_endpoint_alias(
-        arguments.args["url"],
-        arguments.args["alias"] if "alias" in arguments.args else None,
-    )
+def add_endpoint_command(command, args, unknown_named, unknown_positional):
+    _add_endpoint_alias(args.url, args.alias)
 
 
 def _add_endpoint_alias(url, alias=None, route_name=None, method="get"):

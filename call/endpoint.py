@@ -15,7 +15,7 @@ class Endpoint:
     paths: {str: Path} = None
 
     def build_request(
-        self, path_name: str, arguments: [pyargs.Argument] = None
+        self, path_name: str, arguments: pyargs.ParsedArguments = None
     ) -> Request:
 
         if path_name in self.paths:
