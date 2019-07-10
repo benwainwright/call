@@ -1,10 +1,10 @@
 import urllib
-import call.endpoint
+from call import Endpoint, JsonDataManager
 import call.path
 import call.config
-import call.json_data
 from builtins import ValueError
 
+alias_file = JsonDataManager(call.config.ALIAS_FILE)
 
 def add_endpoint_command(arguments):
     if "url" not in arguments.args:
@@ -17,16 +17,16 @@ def add_endpoint_command(arguments):
 
 
 def _add_endpoint_alias(url, alias=None, route_name=None, method="get"):
-    with call.json_data.data_from_json_file(call.config.ALIAS_FILE) as data:
+    with alias_file.data() as data:
         parts = urllib.parse.urlparse(url)
         base_url = f"{parts.scheme}://{parts.hostname}"
 
         alias = _get_alias_name(base_url, data)
 
         if alias in data:
-            endpoint = call.Endpoint.from_dict(data[alias])
+            endpoint = Endpoint.from_dict(data[alias])
         else:
-            endpoint = call.endpoint.Endpoint(name=alias, base_url=base_url, paths=[])
+            endpoint = Endpoint(name=alias, base_url=base_url, paths=[])
 
         endpoint.paths.append(
             _make_new_path_alias(
@@ -93,23 +93,23 @@ def _get_alias_name(base_url, data):
     return (
         found_aliases[0]
         if len(found_aliases) > 0
-        else input(f"Enter alias for {base_url}")
+        else input(f"Enter alias name for {base_url}: ")
     )
 
 
 def _make_new_path_alias(
     alias, base_url, path, query, method, route_name
 ) -> call.path.Path:
-    name = (
-        route_name
-        if route_name is not None
-        else input(f"Enter path name for {method.upper()} {alias} {path}: ")
-    )
-
     path_string, query_string = _create_format_string_from_url(path, query)
     full_string = (
         f"{path_string}?{query_string}" if len(query_string) > 0 else path_string
     )
+    name = (
+        route_name
+        if route_name is not None
+        else input(f"Enter path name for {alias} -> {method.upper()} -> {full_string}: ")
+    )
+
 
     return call.path.Path(
         method=method,

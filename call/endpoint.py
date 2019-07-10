@@ -1,7 +1,10 @@
 import pyargs
-from call.path import Path
 import urllib.parse
+
 from dataclasses import dataclass
+
+from call.path import Path
+from call.request import Request
 
 
 @dataclass
@@ -9,39 +12,46 @@ class Endpoint:
 
     name: str
     base_url: str
-    paths: [Path] = None
+    paths: {str: Path} = None
 
-    # def get_url(self, arguments = None):
-    #     url = urllib.parse.urljoin(self.base_url, self.path_string)
+    def build_request(
+        self, path_name: str, arguments: [pyargs.Argument] = None
+    ) -> Request:
 
-    #     if arguments is None:
-    #         return url
+        if path_name in self.paths:
+            path = self.paths[path_name]
+            url = urllib.parse.urljoin(self.base_url, path.route)
+            if arguments is None:
+                return Request(url=url, method=path.method)
 
-    #     parts = urllib.parse.urlparse(url)
-    #     query_pairs = [
-    #         pair.split("=", 1) for pair in parts.query.split("&") if len(pair) > 0
-    #     ]
-    #     names = self.option_names + [
-    #         pair[0] for pair in query_pairs if len(pair) > 1 and pair[1] == "{}"
-    #     ]
+            parts = urllib.parse.urlparse(url)
+            query_pairs = [
+                pair.split("=", 1) for pair in parts.query.split("&") if len(pair) > 0
+            ]
+            names = self.option_names + [
+                pair[0] for pair in query_pairs if len(pair) > 1 and pair[1] == "{}"
+            ]
+            values = [
+                arg.value for name in names for arg in arguments if arg.name == name
+            ]
 
-    #     values = [arg.value for name in names for arg in arguments if arg.name == name]
-    #     return url.format(*values)
+        return Request(url=url.format(*values), method=path.method)
 
     @staticmethod
     def from_dict(data: {}):
         return Endpoint(
             name=data["name"],
             base_url=data["base_url"],
-            paths=[
-                Path(
+            paths={
+                alias: Path(
                     method=method,
                     name=alias,
-                    route=data["paths"][method][alias]["string"],
+                    route=data["paths"][method][alias]["route"],
+                    options=data["paths"][method][alias]["options"],
                 )
                 for method in data["paths"]
                 for alias in data["paths"][method]
-            ],
+            },
         )
 
     def to_dict(self):

@@ -1,151 +1,151 @@
-import pyargs
+# import pyargs
 
-from call.endpoint import Endpoint
-
-
-def test_correctly_constructs_url_without_options():
-
-    endpoint = Endpoint(
-        name="foo",
-        base_url="https://www.google.com",
-        path_string="foo/bar",
-        path_name="foo",
-        method="get",
-        option_names=[],
-    )
-
-    url = endpoint.get_url()
-
-    assert url == "https://www.google.com/foo/bar"
+# from call.endpoint import Endpoint
 
 
-def test_correctly_constructs_url_with_single_arg():
+# def test_correctly_constructs_url_without_options():
 
-    endpoint = Endpoint(
-        name="foo",
-        base_url="https://www.google.com",
-        path_string="foo/bar/{}/bar",
-        path_name="foo",
-        method="get",
-        option_names=["foo"],
-    )
+#     endpoint = Endpoint(
+#         name="foo",
+#         base_url="https://www.google.com",
+#         path_string="foo/bar",
+#         path_name="foo",
+#         method="get",
+#         option_names=[],
+#     )
 
-    args = [
-        pyargs.Argument(
-            name="foo",
-            description="blah",
-            required=True,
-            value="baz"
-        )
-    ]
+#     url = endpoint.get_url()
 
-    url = endpoint.get_url(args)
+#     assert url == "https://www.google.com/foo/bar"
 
-    assert url == "https://www.google.com/foo/bar/baz/bar"
 
-def test_correctly_constructs_url_with_query_that_has_constant_parts():
-    endpoint = Endpoint(
-        name="foo",
-        base_url="https://www.google.com",
-        path_string="foo/bar/{}/{}?bar=baz&fire={}&blob=blah",
-        path_name="foo",
-        method="get",
-        option_names=["foo", "fish"],
-    )
+# def test_correctly_constructs_url_with_single_arg():
 
-    args = [
-        pyargs.Argument(
-            name="fire",
-            description="blah",
-            required=True,
-            value="bright"
-        ),
-        pyargs.Argument(
-            name="fish",
-            description="blah",
-            required=True,
-            value="wet"
-        ),
-        pyargs.Argument(
-            name="foo",
-            description="blah",
-            required=True,
-            value="bar"
-        )
-    ]
+#     endpoint = Endpoint(
+#         name="foo",
+#         base_url="https://www.google.com",
+#         path_string="foo/bar/{}/bar",
+#         path_name="foo",
+#         method="get",
+#         option_names=["foo"],
+#     )
 
-    url = endpoint.get_url(args)
+#     args = [
+#         pyargs.Argument(
+#             name="foo",
+#             description="blah",
+#             required=True,
+#             value="baz"
+#         )
+#     ]
 
-    assert url == "https://www.google.com/foo/bar/bar/wet?bar=baz&fire=bright&blob=blah"
+#     url = endpoint.get_url(args)
 
-def test_correctly_constructs_url_with_multiple_args_including_some_in_query():
+#     assert url == "https://www.google.com/foo/bar/baz/bar"
 
-    endpoint = Endpoint(
-        name="foo",
-        base_url="https://www.google.com",
-        path_string="foo/bar/{}/{}?fire={}",
-        path_name="foo",
-        method="get",
-        option_names=["foo", "fish"],
-    )
+# def test_correctly_constructs_url_with_query_that_has_constant_parts():
+#     endpoint = Endpoint(
+#         name="foo",
+#         base_url="https://www.google.com",
+#         path_string="foo/bar/{}/{}?bar=baz&fire={}&blob=blah",
+#         path_name="foo",
+#         method="get",
+#         option_names=["foo", "fish"],
+#     )
 
-    args = [
-        pyargs.Argument(
-            name="fire",
-            description="blah",
-            required=True,
-            value="bright"
-        ),
-        pyargs.Argument(
-            name="fish",
-            description="blah",
-            required=True,
-            value="wet"
-        ),
-        pyargs.Argument(
-            name="foo",
-            description="blah",
-            required=True,
-            value="bar"
-        )
-    ]
+#     args = [
+#         pyargs.Argument(
+#             name="fire",
+#             description="blah",
+#             required=True,
+#             value="bright"
+#         ),
+#         pyargs.Argument(
+#             name="fish",
+#             description="blah",
+#             required=True,
+#             value="wet"
+#         ),
+#         pyargs.Argument(
+#             name="foo",
+#             description="blah",
+#             required=True,
+#             value="bar"
+#         )
+#     ]
 
-    url = endpoint.get_url(args)
+#     url = endpoint.get_url(args)
 
-    assert url == "https://www.google.com/foo/bar/bar/wet?fire=bright"
+#     assert url == "https://www.google.com/foo/bar/bar/wet?bar=baz&fire=bright&blob=blah"
 
-def test_correctly_constructs_url_with_multiple_args():
+# def test_correctly_constructs_url_with_multiple_args_including_some_in_query():
 
-    endpoint = Endpoint(
-        name="foo",
-        base_url="https://www.google.com",
-        path_string="foo/bar/{}/{}",
-        path_name="foo",
-        method="get",
-        option_names=["foo", "fish"]
-    )
+#     endpoint = Endpoint(
+#         name="foo",
+#         base_url="https://www.google.com",
+#         path_string="foo/bar/{}/{}?fire={}",
+#         path_name="foo",
+#         method="get",
+#         option_names=["foo", "fish"],
+#     )
 
-    args = [
-        pyargs.Argument(
-            name="fire",
-            description="blah",
-            required=True,
-            value="bright"
-        ),
-        pyargs.Argument(
-            name="fish",
-            description="blah",
-            required=True,
-            value="wet"
-        ),
-        pyargs.Argument(
-            name="foo",
-            description="blah",
-            required=True,
-            value="bar"
-        )
-    ]
+#     args = [
+#         pyargs.Argument(
+#             name="fire",
+#             description="blah",
+#             required=True,
+#             value="bright"
+#         ),
+#         pyargs.Argument(
+#             name="fish",
+#             description="blah",
+#             required=True,
+#             value="wet"
+#         ),
+#         pyargs.Argument(
+#             name="foo",
+#             description="blah",
+#             required=True,
+#             value="bar"
+#         )
+#     ]
 
-    url = endpoint.get_url(args)
+#     url = endpoint.get_url(args)
 
-    assert url == "https://www.google.com/foo/bar/bar/wet"
+#     assert url == "https://www.google.com/foo/bar/bar/wet?fire=bright"
+
+# def test_correctly_constructs_url_with_multiple_args():
+
+#     endpoint = Endpoint(
+#         name="foo",
+#         base_url="https://www.google.com",
+#         path_string="foo/bar/{}/{}",
+#         path_name="foo",
+#         method="get",
+#         option_names=["foo", "fish"]
+#     )
+
+#     args = [
+#         pyargs.Argument(
+#             name="fire",
+#             description="blah",
+#             required=True,
+#             value="bright"
+#         ),
+#         pyargs.Argument(
+#             name="fish",
+#             description="blah",
+#             required=True,
+#             value="wet"
+#         ),
+#         pyargs.Argument(
+#             name="foo",
+#             description="blah",
+#             required=True,
+#             value="bar"
+#         )
+#     ]
+
+#     url = endpoint.get_url(args)
+
+#     assert url == "https://www.google.com/foo/bar/bar/wet"

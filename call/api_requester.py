@@ -8,20 +8,20 @@ from call.endpoint import Endpoint
 
 class ApiRequester:
 
-    def __init__(self, data_manager, alias_file):
+    def __init__(self, data_manager):
         self.data_manager = data_manager
-        self.alias_file = alias_file
 
     @contextlib.asynccontextmanager
     async def do_call(
-        self, alias, path, method="get", parsed_arguments: [pyargs.Argument] = None
+        self, alias, path, parsed_arguments: [pyargs.Argument] = None
     ) -> aiohttp.ClientRequest:
         async with ApiRequester._get_session() as session:
-            with self.data_manager(self.alias_file) as data:
-                endpoint = Endpoint.from_data(data, alias, path, method)
-                url = endpoint.get_url(parsed_arguments)
-                async with session.request(method, url) as response:
-                    yield response
+            with self.data_manager.data() as data:
+                if alias in data:
+                    endpoint = Endpoint.from_dict(data[alias])
+                    request = endpoint.build_request(path, parsed_arguments)
+                    async with request.send(session) as response:
+                        yield response
 
     @staticmethod
     @contextlib.asynccontextmanager

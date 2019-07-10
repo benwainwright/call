@@ -3,25 +3,26 @@ import pytest
 import os
 
 from call.api_requester import ApiRequester
-from call.json_data import data_from_json_file
 
 
 @pytest.mark.asyncio
 async def test_correct_api_call_is_made_when_passing_in_configured_alias(aresponses):
-    mock_data = """{
+    mock_data = {
         "jenkins": {
+            "name": "jenkins",
             "base_url": "https://jenkins.webcore.tools.bbc.co.uk",
             "paths": {
                 "get": {
                     "list": {
-                        "string": "api/json"
+                        "route": "api/json",
+                        "options": []
                     }
                 }
             }
         }
     }
-    """
-    mocked_open = unittest.mock.mock_open(read_data=mock_data)
+    mock_data_manager = unittest.mock.MagicMock()
+    mock_data_manager.data.return_value.__enter__.return_value = mock_data
 
     aresponses.add(
         "jenkins.webcore.tools.bbc.co.uk",
@@ -32,10 +33,7 @@ async def test_correct_api_call_is_made_when_passing_in_configured_alias(arespon
             headers={"Content-Type": "application/json"},
         ),
     )
-    with unittest.mock.patch("call.json_data.open", mocked_open):
-        requester = ApiRequester(
-            data_from_json_file, os.path.join(os.getcwd(), "tests", "aliases.json")
-        )
+    requester = ApiRequester(mock_data_manager)
 
-        async with requester.do_call("jenkins", "list") as response:
-            assert await response.json() == {"response": "found"}
+    async with requester.do_call("jenkins", "list") as response:
+        assert await response.json() == {"response": "found"}
