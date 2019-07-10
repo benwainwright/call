@@ -2,7 +2,6 @@ import urllib
 from call import Endpoint, JsonDataManager
 import call.path
 import call.config
-from builtins import ValueError
 
 alias_file = JsonDataManager(call.config.ALIAS_FILE)
 
@@ -75,10 +74,11 @@ def _get_option_names(path_string, query_string):
             name = input(f"{i}: ")
             options.append(name)
 
-        for pair in query_string.split("&"):
-            pair = pair.split("=", 1)
-            if len(pair) > 1 and pair[1] == "{}":
-                options.append(pair[0])
+    for pair in query_string.split("&"):
+        pair = pair.split("=", 1)
+        if len(pair) > 1 and pair[1] == "{}":
+            options.append(pair[0])
+
     return options
 
 

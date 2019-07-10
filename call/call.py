@@ -1,7 +1,5 @@
 import os
 
-from call.template_loader import TemplateLoader
-from call.pretty_json import pretty_json
 from call.api_requester import ApiRequester
 
 from jinja2 import TemplateError, Environment

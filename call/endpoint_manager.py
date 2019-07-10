@@ -1,6 +1,5 @@
 import contextlib
 
-from call.json_data_manager import JsonDataManager
 from call.endpoint import Endpoint
 
 

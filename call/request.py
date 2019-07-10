@@ -1,5 +1,3 @@
-import contextlib
-
 import aiohttp
 
 from dataclasses import dataclass

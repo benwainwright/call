@@ -1,9 +1,8 @@
 import asyncio
 from pyargs import Command, Argument, ArgumentSchema, BadUsageError
 
-import click
 import sys
-from jinja2 import Environment, TemplateError
+from jinja2 import Environment
 
 import call.config
 from call import (
@@ -14,7 +13,6 @@ from call import (
     TemplateLoader,
     pretty_json,
 )
-from call.endpoint_manager import EndpointManager
 
 
 async def call_api(alias, path, args):
