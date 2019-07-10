@@ -4,16 +4,17 @@ import contextlib
 import pyargs
 
 from call.endpoint import Endpoint
+from call.json_data_manager import JsonDataManager
 
 
 class ApiRequester:
 
-    def __init__(self, data_manager):
+    def __init__(self, data_manager: JsonDataManager):
         self.data_manager = data_manager
 
     @contextlib.asynccontextmanager
     async def do_call(
-        self, alias, path, parsed_arguments: [pyargs.Argument] = None
+        self, alias: str, path: str, parsed_arguments: [pyargs.Argument] = None
     ) -> aiohttp.ClientRequest:
         async with ApiRequester._get_session() as session:
             with self.data_manager.data() as data:

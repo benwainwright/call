@@ -5,7 +5,7 @@ import copy
 
 
 class JsonDataManager:
-    def __init__(self, path):
+    def __init__(self, path: str):
         dir = os.path.dirname(path)
         if not os.path.isdir(dir):
             os.makedirs(dir)
