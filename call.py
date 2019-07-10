@@ -1,5 +1,5 @@
 import asyncio
-from pyargs import Command, Argument, BadUsageError
+from pyargs import Command, Argument, ArgumentSchema, BadUsageError
 
 import click
 import sys
@@ -33,15 +33,14 @@ async def go(endpoint, path, method, other_opts):
 #     other_opts = parse_other_args(api_options)
 #     loop.run_until_complete(go(endpoint, path, method, other_opts))
 
+
 def go(arguments):
     pass
-
 
 
 data_manager = JsonDataManager(call.config.ALIAS_FILE)
 with data_manager.data() as data:
     endpoints = EndpointManager(data)
-    print(endpoints)
     call = Command(
         name="call",
         subcommands=[
@@ -53,10 +52,12 @@ with data_manager.data() as data:
                         name=path.name,
                         description=f"{endpoint.name} -> {path.method.upper()} -> {path.route}",
                         function=go,
-                        schema=[
-                            Argument(name=option, description="foo")
-                            for option in path.options
-                        ],
+                        schema=ArgumentSchema(
+                            args=[
+                                Argument(name=option, description="foo")
+                                for option in path.options
+                            ]
+                        ),
                     )
                     for path in endpoint.paths.values()
                 ],
