@@ -46,6 +46,7 @@ class Endpoint:
                 alias: Path(
                     method=method,
                     name=alias,
+                    description=data["paths"][method][alias]["description"],
                     route=data["paths"][method][alias]["route"],
                     options=[
                         Option(name=option["name"], description=option["description"])
@@ -58,6 +59,7 @@ class Endpoint:
         )
 
     def to_dict(self):
+        print(self)
         return {
             "name": self.name,
             "base_url": self.base_url,
@@ -65,6 +67,7 @@ class Endpoint:
                 method: {
                     path.name: {
                         "route": path.route,
+                        "description": path.description,
                         "options": [
                             {"name": option.name, "description": option.description}
                             for option in path.options

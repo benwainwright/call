@@ -1,6 +1,7 @@
 import urllib
 from call import Endpoint, JsonDataManager
-import call.path
+import call.endpoint.path
+from call.endpoint.option import Option
 import call.config
 
 alias_file = JsonDataManager(call.config.ALIAS_FILE)
@@ -54,7 +55,6 @@ def _create_format_string_from_url(path, query) -> str:
     for index in (i for i in indexes if i < len(segments)):
         segments[index] = "{}"
 
-    print(len(query))
     if len(query_parts) > 0:
         for index in (i - len(segments) for i in indexes if i >= len(segments)):
             pair = query_parts[index].split("=", 1)
@@ -64,20 +64,23 @@ def _create_format_string_from_url(path, query) -> str:
     return "/".join(segments), "&".join(query_parts)
 
 
-def _get_option_names(path_string, query_string):
+def _get_options(path_string, query_string) -> [Option]:
     options = []
     option_count = len(path_string.split("{}")) - 1
     if (option_count) > 0:
         print(f"Enter variable names for {path_string}")
 
         for i in range(option_count):
-            name = input(f"{i}: ")
-            options.append(name)
+            name = input(f"Enter name for variable {i}: ").strip()
+            description = input(f"Enter description for variable '{name}'': ").strip()
+            options.append(Option(name=name, description=description))
 
     for pair in query_string.split("&"):
         pair = pair.split("=", 1)
         if len(pair) > 1 and pair[1] == "{}":
-            options.append(pair[0])
+            name = pair[0]
+            description = input(f"Enter description for '{name}': ").strip()
+            options.append(Option(name=name, description=description))
 
     return options
 
@@ -96,7 +99,7 @@ def _get_alias_name(base_url, data):
 
 def _make_new_path_alias(
     alias, base_url, path, query, method, route_name
-) -> call.path.Path:
+) -> call.endpoint.path.Path:
     path_string, query_string = _create_format_string_from_url(path, query)
     full_string = (
         f"{path_string}?{query_string}" if len(query_string) > 0 else path_string
@@ -109,9 +112,12 @@ def _make_new_path_alias(
         )
     )
 
-    return call.path.Path(
+    description = input(f"Enter description for '{name}': ")
+
+    return call.endpoint.path.Path(
         method=method,
         name=name,
+        description=description,
         route=full_string,
-        options=_get_option_names(path_string, query_string),
+        options=_get_options(path_string, query_string),
     )

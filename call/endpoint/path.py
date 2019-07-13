@@ -6,6 +6,7 @@ from dataclasses import dataclass
 class Path:
 
     method: str
+    description: str
     name: str
     route: str
     options: [Option]

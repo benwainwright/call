@@ -44,11 +44,11 @@ def configure_command_from_endpoint_data(endpoint):
                 subcommands=[
                     Command(
                         name=path.name,
-                        description=f"{endpoint.name} -> {path.method.upper()} -> {path.route}",
+                        description=path.description,
                         function=go,
                         schema=ArgumentSchema(
                             args=[
-                                Argument(name=option, description="foo")
+                                Argument(name=option.name, description=option.description, required=True)
                                 for option in path.options
                             ]
                         ),
