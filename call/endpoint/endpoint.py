@@ -43,17 +43,16 @@ class Endpoint:
             base_url=data["base_url"],
             paths={
                 alias: Path(
-                    method=method,
+                    method=data["paths"][alias]["method"],
                     name=alias,
-                    description=data["paths"][method][alias]["description"],
-                    route=data["paths"][method][alias]["route"],
+                    description=data["paths"][alias]["description"],
+                    route=data["paths"][alias]["route"],
                     options=[
                         Option(name=option["name"], description=option["description"])
-                        for option in data["paths"][method][alias]["options"]
+                        for option in data["paths"][alias]["options"]
                     ],
                 )
-                for method in data["paths"]
-                for alias in data["paths"][method]
+                for alias in data["paths"]
             },
         )
 
@@ -62,18 +61,15 @@ class Endpoint:
             "name": self.name,
             "base_url": self.base_url,
             "paths": {
-                method: {
-                    path.name: {
-                        "route": path.route,
-                        "description": path.description,
-                        "options": [
-                            {"name": option.name, "description": option.description}
-                            for option in path.options
-                        ],
-                    }
-                    for path in self.paths.values()
-                    if path.method == method
+                path.name: {
+                    "method": path.method,
+                    "route": path.route,
+                    "description": path.description,
+                    "options": [
+                        {"name": option.name, "description": option.description}
+                        for option in path.options
+                    ],
                 }
-                for method in {path.method for path in self.paths.values()}
+                for path in self.paths.values()
             },
         }
