@@ -38,7 +38,6 @@ class Endpoint:
 
     @staticmethod
     def from_dict(data: {}):
-        print(data)
         return Endpoint(
             name=data["name"],
             base_url=data["base_url"],
@@ -59,7 +58,6 @@ class Endpoint:
         )
 
     def to_dict(self):
-        print(self)
         return {
             "name": self.name,
             "base_url": self.base_url,
