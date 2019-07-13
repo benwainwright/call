@@ -1,6 +1,6 @@
 import contextlib
 
-from call.endpoint import Endpoint
+from call.endpoint.endpoint import Endpoint
 
 
 class EndpointManager:
@@ -11,6 +11,9 @@ class EndpointManager:
         for key in self.data:
             with self.get_endpoint(key) as endpoint:
                 yield endpoint
+
+    def __len__(self):
+        return len(self.data)
 
     def __contains__(self, name):
         return name in self.data

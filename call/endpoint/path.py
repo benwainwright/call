@@ -1,3 +1,4 @@
+from call.endpoint.option import Option
 from dataclasses import dataclass
 
 
@@ -7,4 +8,4 @@ class Path:
     method: str
     name: str
     route: str
-    options: [str]
+    options: [Option]

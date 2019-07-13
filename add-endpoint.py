@@ -22,14 +22,8 @@ schema = ArgumentSchema(
 )
 
 
-try:
-    add_endpoint_command = Command(
-        "Add endpoint", function=add_endpoint_command, schema=schema
-    )
+add_endpoint_command = Command(
+    "Add endpoint", function=add_endpoint_command, schema=schema
+)
 
-    add_endpoint_command.execute(sys.argv)
-except BadUsageError as ex:
-    print(f"Error! {ex.message}\n")
-    print(f"Usage! {ex.usage}")
-    print(f"\nPossible arguments (can be either POSITIONAL or NAMED arguments):\n")
-    print(f"\n".join(ex.options))
+add_endpoint_command.execute_or_print_usage(sys.argv)

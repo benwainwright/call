@@ -1,5 +1,5 @@
-from call.endpoint import Endpoint
 from call.endpoint_manager import EndpointManager
+from call.endpoint.endpoint import Endpoint
 from call.request import Request
 from call.api_requester import ApiRequester
 from call.json_data_manager import JsonDataManager

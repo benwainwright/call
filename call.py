@@ -34,10 +34,8 @@ def go(command, args, unknown_named, unknown_positional):
     loop.run_until_complete(call_api(alias, path, args))
 
 
-data_manager = JsonDataManager(call.config.ALIAS_FILE)
-with data_manager.data() as data:
-    endpoints = EndpointManager(data)
-    call_command = Command(
+def configure_command_from_endpoint_data(endpoint):
+    return Command(
         name="call",
         subcommands=[
             Command(
@@ -62,10 +60,14 @@ with data_manager.data() as data:
         ],
     )
 
-try:
-    call_command.execute(sys.argv)
-except BadUsageError as ex:
-    print(f"Error! {ex.message}\n")
-    print(f"Usage: {ex.usage}")
-    print(f"\nPossible arguments (can be either POSITIONAL or NAMED arguments):\n")
-    print("\n".join(ex.options))
+
+data_manager = JsonDataManager(call.config.ALIAS_FILE)
+with data_manager.data() as data:
+    endpoints = EndpointManager(data)
+    if len(endpoints) > 0:
+        command = configure_command_from_endpoint_data(endpoints)
+        command.execute_or_print_usage(sys.argv)
+    else:
+        print(
+            "No endpoints configured. You can use the accompanying 'add-endpoint' utility to do this"
+        )

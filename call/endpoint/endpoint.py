@@ -3,8 +3,9 @@ import urllib.parse
 
 from dataclasses import dataclass
 
-from call.path import Path
+from call.endpoint.path import Path
 from call.request import Request
+from call.endpoint.option import Option
 
 
 @dataclass
@@ -28,9 +29,7 @@ class Endpoint:
             query_pairs = [
                 pair.split("=", 1) for pair in parts.query.split("&") if len(pair) > 0
             ]
-            names = path.options + [
-                pair[0] for pair in query_pairs if len(pair) > 1 and pair[1] == "{}"
-            ]
+            names = [option.name for option in path.options]
             values = [
                 arg.value for name in names for arg in arguments if arg.name == name
             ]
@@ -39,6 +38,7 @@ class Endpoint:
 
     @staticmethod
     def from_dict(data: {}):
+        print(data)
         return Endpoint(
             name=data["name"],
             base_url=data["base_url"],
@@ -47,7 +47,10 @@ class Endpoint:
                     method=method,
                     name=alias,
                     route=data["paths"][method][alias]["route"],
-                    options=data["paths"][method][alias]["options"],
+                    options=[
+                        Option(name=option["name"], description=option["description"])
+                        for option in data["paths"][method][alias]["options"]
+                    ],
                 )
                 for method in data["paths"]
                 for alias in data["paths"][method]
@@ -60,7 +63,13 @@ class Endpoint:
             "base_url": self.base_url,
             "paths": {
                 method: {
-                    path.name: {"route": path.route, "options": path.options}
+                    path.name: {
+                        "route": path.route,
+                        "options": [
+                            {"name": option.name, "description": option.description}
+                            for option in path.options
+                        ],
+                    }
                     for path in self.paths.values()
                     if path.method == method
                 }
