@@ -11,7 +11,7 @@ def add_endpoint_command(command, args, unknown_named, unknown_positional):
     _add_endpoint_alias(args.url, args.alias)
 
 
-def _add_endpoint_alias(url, alias=None, route_name=None, method="get"):
+def _add_endpoint_alias(url, alias=None, route_name=None):
     with alias_file.data() as data:
         parts = urllib.parse.urlparse(url)
         base_url = f"{parts.scheme}://{parts.hostname}"
@@ -24,7 +24,7 @@ def _add_endpoint_alias(url, alias=None, route_name=None, method="get"):
             endpoint = Endpoint(name=alias, base_url=base_url, paths={})
 
         endpoint.paths[alias] = _make_new_path_alias(
-            alias, base_url, parts.path, parts.query, method, route_name
+            alias, base_url, parts.path, parts.query, route_name
         )
 
         data[alias] = endpoint.to_dict()
@@ -98,12 +98,13 @@ def _get_alias_name(base_url, data):
 
 
 def _make_new_path_alias(
-    alias, base_url, path, query, method, route_name
+    alias, base_url, path, query, route_name
 ) -> call.endpoint.path.Path:
     path_string, query_string = _create_format_string_from_url(path, query)
     full_string = (
         f"{path_string}?{query_string}" if len(query_string) > 0 else path_string
     )
+    method = input(f"Enter http method for {alias} -> {full_string} (default: 'GET'): ")
     name = (
         route_name
         if route_name is not None
