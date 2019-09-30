@@ -4,3 +4,4 @@ dist
 __pycache__
 .pycache
 .pytest_cache
+releases
