@@ -1,8 +1,8 @@
 import sys
 
-from pyargs import Command, Argument, ArgumentSchema, BadUsageError
+from pycall.args import Command, Argument, ArgumentSchema, BadUsageError
 
-from call.add_endpoint import add_endpoint_command
+from pycall.add_endpoint import add_endpoint_command
 
 schema = ArgumentSchema(
     args=[

@@ -1,5 +1,5 @@
 import urllib
-from call import Endpoint, JsonDataManager
+from pycall import Endpoint, JsonDataManager
 import pycall.endpoint.path
 from pycall.endpoint.option import Option
 import pycall.config

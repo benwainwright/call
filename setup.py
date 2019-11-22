@@ -4,7 +4,7 @@ setup(
     name="pycall",
     version="0.1",
     packages=find_packages(),
-    scripts=["add-endpoint.py", "bin/call"],
+    scripts=["bin/add-call", "bin/call"],
     python_requires=">3.7.3",
     install_requires=[
         "aiohttp>=3.5.4",
