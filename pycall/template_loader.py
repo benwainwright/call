@@ -1,6 +1,6 @@
 import os
 from jinja2 import BaseLoader
-from call.helpers import make_file_dir_if_not_exists
+from pycall.helpers import make_file_dir_if_not_exists
 
 default_template = "{{ response|pretty_json }}"
 

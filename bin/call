@@ -1,11 +1,11 @@
 import asyncio
-from pyargs import Command, Argument, ArgumentSchema, BadUsageError
+from pycall.args import Command, Argument, ArgumentSchema, BadUsageError
 
 import sys
 from jinja2 import Environment
 
-import call.config
-from call import (
+import pycall.config
+from pycall import (
     ApiRequester,
     Call,
     EndpointManager,
@@ -16,9 +16,9 @@ from call import (
 
 
 async def call_api(alias, path, args):
-    jinja_env = Environment(loader=TemplateLoader(call.config.CLI_API_DIR))
+    jinja_env = Environment(loader=TemplateLoader(pycall.config.CLI_API_DIR))
     jinja_env.filters["pretty_json"] = pretty_json
-    data_manager = JsonDataManager(call.config.ALIAS_FILE)
+    data_manager = JsonDataManager(pycall.config.ALIAS_FILE)
     with data_manager.data() as data:
         endpoints = EndpointManager(data)
         requester = ApiRequester(endpoints)
@@ -61,7 +61,7 @@ def configure_command_from_endpoint_data(endpoint):
     )
 
 
-data_manager = JsonDataManager(call.config.ALIAS_FILE)
+data_manager = JsonDataManager(pycall.config.ALIAS_FILE)
 with data_manager.data() as data:
     endpoints = EndpointManager(data)
     if len(endpoints) > 0:

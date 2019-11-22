@@ -1,11 +1,11 @@
-import pyargs
+import pycall.args
 import urllib.parse
 
 from dataclasses import dataclass
 
-from call.endpoint.path import Path
-from call.request import Request
-from call.endpoint.option import Option
+from pycall.endpoint.path import Path
+from pycall.request import Request
+from pycall.endpoint.option import Option
 
 
 @dataclass
@@ -16,7 +16,7 @@ class Endpoint:
     paths: {str: Path} = None
 
     def build_request(
-        self, path_name: str, arguments: pyargs.ParsedArguments = None
+        self, path_name: str, arguments: pycall.args.ParsedArguments = None
     ) -> Request:
 
         if path_name in self.paths:

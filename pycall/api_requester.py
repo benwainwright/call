@@ -1,9 +1,9 @@
 import ssl
 import aiohttp
 import contextlib
-import pyargs
+import pycall.args
 
-from call.endpoint_manager import EndpointManager
+from pycall.endpoint_manager import EndpointManager
 
 
 class ApiRequester:
@@ -12,7 +12,7 @@ class ApiRequester:
 
     @contextlib.asynccontextmanager
     async def do_call(
-        self, alias: str, path: str, parsed_arguments: pyargs.ParsedArguments = None
+        self, alias: str, path: str, parsed_arguments: pycall.args.ParsedArguments = None
     ) -> aiohttp.ClientRequest:
         async with ApiRequester._get_session() as session:
             if alias in self.endpoint_manager:

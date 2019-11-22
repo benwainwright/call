@@ -1,10 +1,10 @@
 import urllib
 from call import Endpoint, JsonDataManager
-import call.endpoint.path
-from call.endpoint.option import Option
-import call.config
+import pycall.endpoint.path
+from pycall.endpoint.option import Option
+import pycall.config
 
-alias_file = JsonDataManager(call.config.ALIAS_FILE)
+alias_file = JsonDataManager(pycall.config.ALIAS_FILE)
 
 
 def add_endpoint_command(command, args, unknown_named, unknown_positional):
@@ -99,7 +99,7 @@ def _get_alias_name(base_url, data):
 
 def _make_new_path_alias(
     alias, base_url, path, query, route_name
-) -> call.endpoint.path.Path:
+) -> pycall.endpoint.path.Path:
     path_string, query_string = _create_format_string_from_url(path, query)
     full_string = (
         f"{path_string}?{query_string}" if len(query_string) > 0 else path_string
@@ -115,7 +115,7 @@ def _make_new_path_alias(
 
     description = input(f"Enter description for '{name}': ")
 
-    return call.endpoint.path.Path(
+    return pycall.endpoint.path.Path(
         method=method,
         name=name,
         description=description,

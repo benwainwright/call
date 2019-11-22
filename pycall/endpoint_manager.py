@@ -1,6 +1,6 @@
 import contextlib
 
-from call.endpoint.endpoint import Endpoint
+from pycall.endpoint.endpoint import Endpoint
 
 
 class EndpointManager:

@@ -1,4 +1,4 @@
-from call.endpoint.option import Option
+from pycall.endpoint.option import Option
 from dataclasses import dataclass
 
 

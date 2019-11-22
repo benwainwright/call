@@ -1,6 +1,6 @@
 import os
 
-from call.api_requester import ApiRequester
+from pycall.api_requester import ApiRequester
 
 from jinja2 import TemplateError, Environment
 
