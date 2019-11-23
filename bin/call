@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-"exec" "$(dirname (realpath ${BASH_SOURCE[0]}))/python" "$0" "$@"
+"exec" "$(dirname $(realpath ${BASH_SOURCE[0]}))/python" "$0" "$@"
 
 import asyncio
 from pycall.args import Command, Argument, ArgumentSchema, BadUsageError
