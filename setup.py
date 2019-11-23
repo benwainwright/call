@@ -7,6 +7,7 @@ setup(
     scripts=["bin/add-call", "bin/call"],
     python_requires=">3.7.3",
     install_requires=[
+        "pygments>=2.4.2",
         "aiohttp>=3.5.4",
         "jinja2>=2.10.1"
     ],

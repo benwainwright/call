@@ -6,6 +6,5 @@ idna==2.8
 Jinja2==2.10.3
 MarkupSafe==1.1.1
 multidict==4.6.1
-pycall==0.1
 Pygments==2.4.2
 yarl==1.3.0
